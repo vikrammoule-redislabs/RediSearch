@@ -340,14 +340,6 @@ void EvalCtx_Destroy(EvalCtx *r) {
 
 //---------------------------------------------------------------------------------------------
 
-RLookupKey *EvalCtx_Set(EvalCtx *r, const char *name, RSValue *val) {
-  RLookupKey *lkk = RLookup_GetKey(&r->lk, name, RLOOKUP_F_OCREAT);
-  if (lkk != NULL) {
-    RLookup_WriteOwnKey(lkk, &r->row, val);
-  }
-  return lkk;
-}
-
 int EvalCtx_AddHash(EvalCtx *r, RedisModuleCtx *ctx, RedisModuleString *key) {
   return RLookup_GetHash(&r->lk, &r->row, ctx, key);
 }

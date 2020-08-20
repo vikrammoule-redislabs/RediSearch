@@ -1725,8 +1725,7 @@ dict *Indexes_FindMatchingSchemaRules(RedisModuleCtx *ctx, RedisModuleString *ke
       // load hash only if required
       r = EvalCtx_Create();
       EvalCtx_AddHash(r, ctx, key);
-      RSValue *keyRSV = RS_RedisStringVal(key);
-      EvalCtx_Set(r, "__key", keyRSV);
+      RLookup_SetKey(&r->lk, &r->row, "__key", key_p, RLOOKUP_F_OCREAT);
     }
 
     if (EvalCtx_EvalExpr(r, rule->filter_exp) == EXPR_EVAL_OK) {

@@ -106,6 +106,16 @@ RLookupKey *RLookup_GetKey(RLookup *lookup, const char *name, int flags) {
   return RLookup_GetKeyEx(lookup, name, strlen(name), flags);
 }
 
+RLookupKey *RLookup_SetKey(RLookup *lookup, RLookupRow *row,
+                           const char *key, const char *value, int flags) {
+  RLookupKey *lkk = RLookup_GetKeyEx(lookup, key, strlen(key), flags);
+  if (lkk != NULL) {
+    RSValue *rs_value = RS_StringVal(value, strlen(value));
+    RLookup_WriteOwnKey(lkk, row, rs_value);
+  }
+  return lkk;
+}
+
 size_t RLookup_GetLength(const RLookup *lookup, const RLookupRow *r, int requiredFlags,
                          int excludeFlags) {
   size_t nfields = 0;

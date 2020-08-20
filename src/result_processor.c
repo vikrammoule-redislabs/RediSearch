@@ -561,6 +561,7 @@ static int rploaderNext(ResultProcessor *base, SearchResult *r) {
     loadopts.mode |= RLOOKUP_LOAD_ALLKEYS;
   }
   RLookup_LoadDocument(lc->lk, &r->rowdata, &loadopts);
+  //
   return RS_RESULT_OK;
 }
 
