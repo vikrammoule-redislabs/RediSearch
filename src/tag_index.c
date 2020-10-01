@@ -171,11 +171,12 @@ void TagIndex_RegisterConcurrentIterators(TagIndex *idx, ConcurrentSearchCtx *co
 /* Open an index reader to iterate a tag index for a specific tag. Used at query evaluation time.
  * Returns NULL if there is no such tag in the index */
 IndexIterator *TagIndex_OpenReader(TagIndex *idx, IndexSpec *sp, const char *value, size_t len,
-                                   double weight) {
-
-  InvertedIndex *iv = TrieMap_Find(idx->values, (char *)value, len);
-  if (iv == TRIEMAP_NOTFOUND || !iv || iv->numDocs == 0) {
-    return NULL;
+                                   InvertedIndex *iv, double weight) {
+  if(!iv) {
+    iv = TrieMap_Find(idx->values, (char *)value, len);
+    if (iv == TRIEMAP_NOTFOUND || !iv || iv->numDocs == 0) {
+      return NULL;
+    }
   }
 
   RSToken tok = {.str = (char *)value, .len = len};

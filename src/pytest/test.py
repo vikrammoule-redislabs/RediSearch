@@ -2306,7 +2306,7 @@ def testPrefixDeletedExpansions(env):
     for x in range(maxexpansions):
         env.cmd('ft.del', 'idx', 'doc{}'.format(x))
 
-    env.cmd('ft.add', 'idx', 'doc_XXX', 1, 'fields', 'txt1', 'termZZZ', 'tag1', 'tagZZZ')
+    env.expect('ft.add', 'idx', 'doc_XXX', 1, 'fields', 'txt1', 'termZZZ', 'tag1', 'tagZZZ').ok()
 
     # r = env.cmd('ft.search', 'idx', 'term*')
     # print(r)
@@ -2319,6 +2319,7 @@ def testPrefixDeletedExpansions(env):
         iters += 1
         env.cmd('ft.debug', 'gc_forceinvoke', 'idx')
         r = env.cmd('ft.search', 'idx', '@txt1:term* @tag1:{tag*}')
+        print r[0]
         if r[0]:
             break
 

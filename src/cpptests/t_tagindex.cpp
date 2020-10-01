@@ -27,7 +27,7 @@ TEST_F(TagIndexTest, testCreate) {
   ASSERT_EQ(v.size(), idx->values->cardinality);
   ASSERT_EQ(300000, totalSZ);
 
-  IndexIterator *it = TagIndex_OpenReader(idx, NULL, "hello", 5, 1);
+  IndexIterator *it = TagIndex_OpenReader(idx, NULL, "hello", 5, NULL, 1);
   ASSERT_TRUE(it != NULL);
   RSIndexResult *r;
   t_docId n = 1;
