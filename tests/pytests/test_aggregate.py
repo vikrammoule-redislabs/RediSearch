@@ -56,6 +56,33 @@ class TestAggregate():
                                     ['brand', 'generic', 'count', '40'], ['brand', 'steelseries', 'count', '37'],
                                     ['brand', 'logitech', 'count', '35']], res)
 
+    def testLimit(self):
+        #first 10 results
+        ten_res = [['brand', '', 'count', '1518'],
+                   ['brand', 'mad catz', 'count', '43'],
+                   ['brand', 'generic', 'count', '40'],
+                   ['brand', 'steelseries', 'count', '37'],
+                   ['brand', 'logitech', 'count', '35'],
+                   ['brand', 'razer', 'count', '26'],
+                   ['brand', 'roccat', 'count', '20'],
+                   ['brand', 'sony', 'count', '14'],
+                   ['brand', 'nintendo', 'count', '13'],
+                   ['brand', 'corsair', 'count', '13']]
+
+        offsets = [0, 1, 2, 3, 4, 5]
+        count = [0, 1, 2, 3, 4, 5]
+
+        for i in range(len(offsets)):
+            for j in range(len(count)):
+                cmd = ['ft.aggregate', 'games', '*',
+                    'GROUPBY', '1', '@brand',
+                    'REDUCE', 'count', '0', 'AS', 'count',
+                    'SORTBY', 2, '@count', 'desc',
+                    'LIMIT', i, j]
+                actual_res = self.env.cmd(*cmd)
+                self.env.assertEqual(292L, actual_res[0])
+                self.env.assertEqual(ten_res[i: i + j], actual_res[1:])
+
     def testMinMax(self):
         cmd = ['ft.aggregate', 'games', 'sony',
                'GROUPBY', '1', '@brand',
