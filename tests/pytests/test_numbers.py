@@ -27,6 +27,7 @@ def testCompression(env):
   
 def testSanity(env):
 	repeat = 100000
+	env.expect('ft.config', 'set', '_NUMERIC_RANGES_PARENTS', '2').equal('OK')
 	conn = getConnectionByEnv(env)
 	pl = conn.pipeline()
 	env.cmd('ft.create', 'idx', 'SCHEMA', 'n', 'numeric')
