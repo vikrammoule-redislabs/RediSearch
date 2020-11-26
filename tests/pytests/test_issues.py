@@ -100,7 +100,7 @@ def testNumericWithPipeline(env):
 		pl.execute_command('hset', i, 'n', i % 1000)
 		if (i % 999) is 0:
 			pl.execute()
-	pl.execute()
+	responses = pl.execute()
 	#env.expect('ft.search', 'idx', ('@n:[0 %d]' % (repeat)), 'limit', 0 ,0).equal([repeat])
 	env.expect('ft.search', 'idx', '*', 'limit', 0 ,0).equal([repeat])
 	#env.expect('FT.DEBUG', 'numidx_summary', 'idx', 'n') \
