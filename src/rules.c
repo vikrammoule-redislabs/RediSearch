@@ -9,17 +9,23 @@ TrieMap *ScemaPrefixes_g;
 const char *SchemaRuleType_ToString(SchemaRuleType type) {
   switch (type) {
     case SchemaRuleType_Hash:
-      return "HASH";
-    case SchameRuleType_Any:
+      return RULE_TYPE_HASH;
+    case SchemaRuleType_Json:
+      return RULE_TYPE_JSON;
+    case SchemaRuleType_Any:
     default:
-      RS_LOG_ASSERT(true, "SchameRuleType_Any is not supported");
+      RS_LOG_ASSERT(true, "SchemaRuleType_Any is not supported");
       return "";
   }
 }
 
 int SchemaRuleType_Parse(const char *type_str, SchemaRuleType *type, QueryError *status) {
-  if (!type_str || !strcasecmp(type_str, RULE_TYPE_HASH)) {
+  if (!type_str || // By default we use hash
+      !strcasecmp(type_str, RULE_TYPE_HASH)) {
     *type = SchemaRuleType_Hash;
+    return REDISMODULE_OK;
+  } else if (!strcasecmp(type_str, RULE_TYPE_JSON)) {
+    *type = SchemaRuleType_Json;
     return REDISMODULE_OK;
   }
   QueryError_SetError(status, QUERY_EADDARGS, "Invalid rule type");

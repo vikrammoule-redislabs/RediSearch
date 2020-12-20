@@ -439,6 +439,7 @@ CONFIG_SETTER(setUpgradeIndex) {
   DUP_IF_NEEDED(rule->payload_field);
   DUP_IF_NEEDED(rule->score_default);
   DUP_IF_NEEDED(rule->score_field);
+  // legacy index can be only hash
   rule->type = rm_strdup(RULE_TYPE_HASH);
 
   // add rule to rules dictionary
