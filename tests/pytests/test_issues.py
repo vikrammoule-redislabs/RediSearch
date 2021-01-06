@@ -110,3 +110,19 @@ def test_MOD_865(env):
     args_list.extend(['txt', 'TEXT'])
   env.expect(*args_list).error().contains('Duplicate field in schema - txt')
   env.expect('FT.DROPINDEX', 'idx')
+
+def test_1749(env):
+  conn = getConnectionByEnv(env)
+  conn.execute_command('FT.CREATE', 'idx', 'SCHEMA', 'text', 'TEXT')
+
+  conn.execute_command('HSET', 'doc1', 'text', 'hello\nworld')
+  env.expect('ft.search idx hello limit 0 0').equal([1L])
+  env.expect('ft.search idx world limit 0 0').equal([1L])
+
+  conn.execute_command('HSET', 'doc2', 'text', 'hello\rworld')
+  env.expect('ft.search idx hello limit 0 0').equal([2L])
+  env.expect('ft.search idx world limit 0 0').equal([2L])
+
+  conn.execute_command('HSET', 'doc3', 'text', 'hello\n\rworld')
+  env.expect('ft.search idx hello limit 0 0').equal([3L])
+  env.expect('ft.search idx world limit 0 0').equal([3L])
