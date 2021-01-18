@@ -319,10 +319,6 @@ static IndexIterator *iterateExpandedTerms(QueryEvalCtx *q, Trie *terms, const c
   rm_free(it->ctx);
   TrieIterator_Free(it);
   // printf("Expanded %d terms!\n", itsSz);
-  if (itsSz == 0) {
-    rm_free(its);
-    return NULL;
-  }
   QueryNodeType type = maxDist == 0 ? QN_PREFIX : QN_FUZZY;
   return NewUnionIterator(its, itsSz, q->docTable, 1, opts->weight, type, str);
 }
@@ -417,12 +413,7 @@ static IndexIterator *Query_EvalLexRangeNode(QueryEvalCtx *q, QueryNode *lx) {
                         end ? nend : -1, lx->lxrng.includeEnd, rangeIterCb, &ctx);
   rm_free(begin);
   rm_free(end);
-  if (!ctx.its || ctx.nits == 0) {
-    rm_free(ctx.its);
-    return NULL;
-  } else {
-    return NewUnionIterator(ctx.its, ctx.nits, q->docTable, 1, lx->opts.weight, QN_LEXRANGE, NULL);
-  }
+  return NewUnionIterator(ctx.its, ctx.nits, q->docTable, 1, lx->opts.weight, QN_LEXRANGE, NULL);
 }
 
 static IndexIterator *Query_EvalFuzzyNode(QueryEvalCtx *q, QueryNode *qn) {
@@ -553,16 +544,6 @@ static IndexIterator *Query_EvalUnionNode(QueryEvalCtx *q, QueryNode *qn) {
       iters[n++] = it;
     }
   }
-  if (n == 0) {
-    rm_free(iters);
-    return NULL;
-  }
-
-  if (n == 1) {
-    IndexIterator *ret = iters[0];
-    rm_free(iters);
-    return ret;
-  }
 
   IndexIterator *ret = NewUnionIterator(iters, n, q->docTable, 0, qn->opts.weight, QN_UNION, NULL);
   return ret;
@@ -588,12 +569,7 @@ static IndexIterator *Query_EvalTagLexRangeNode(QueryEvalCtx *q, TagIndex *idx, 
 
   TrieMap_IterateRange(t, begin, nbegin, qn->lxrng.includeBegin, end, nend, qn->lxrng.includeEnd,
                        rangeIterCbStrs, &ctx);
-  if (ctx.nits == 0) {
-    rm_free(ctx.its);
-    return NULL;
-  } else {
-    return NewUnionIterator(ctx.its, ctx.nits, q->docTable, 1, qn->opts.weight, QN_LEXRANGE, NULL);
-  }
+  return NewUnionIterator(ctx.its, ctx.nits, q->docTable, 1, qn->opts.weight, QN_LEXRANGE, NULL);
 }
 
 /* Evaluate a tag prefix by expanding it with a lookup on the tag index */
@@ -637,11 +613,7 @@ static IndexIterator *Query_EvalTagPrefixNode(QueryEvalCtx *q, TagIndex *idx, Qu
   TrieMapIterator_Free(it);
 
   // printf("Expanded %d terms!\n", itsSz);
-  if (itsSz == 0) {
-    rm_free(its);
-    return NULL;
-  }
-
+  // if itsSz > 0
   *iterout = array_ensure_append(*iterout, its, itsSz, IndexIterator *);
   return NewUnionIterator(its, itsSz, q->docTable, 1, weight, QN_PREFIX, qn->pfx.str);
 }
@@ -729,10 +701,6 @@ static IndexIterator *Query_EvalTagNode(QueryEvalCtx *q, QueryNode *qn) {
     if (it) {
       iters[n++] = it;
     }
-  }
-  if (n == 0) {
-    rm_free(iters);
-    goto done;
   }
 
   if (total_its) {

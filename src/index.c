@@ -139,6 +139,15 @@ static void UI_Rewind(void *ctx) {
 
 IndexIterator *NewUnionIterator(IndexIterator **its, int num, DocTable *dt, int quickExit,
                                 double weight, QueryNodeType type, const char *qstr) {
+  if (num == 0) {
+    rm_free(its);
+    return NULL;
+  }
+  if (num == 1) {
+    IndexIterator *ret = its[0];
+    rm_free(its);
+    return ret;
+  }
   // create union context
   UnionIterator *ctx = rm_calloc(1, sizeof(UnionIterator));
   ctx->origits = its;
