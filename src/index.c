@@ -484,7 +484,7 @@ static int UI_SkipTo(void *ctx, t_docId docId, RSIndexResult **hit) {
     }
     ++numActive;
     // If we've found a single entry and we are iterating in quick exit mode - exit now
-    if (found && quickExit) break;
+    if (found && quickExit && RSGlobalConfig.enableQuickExit) break;
   }
 
   // all iterators are at the end
